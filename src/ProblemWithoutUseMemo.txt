@@ -1,0 +1,50 @@
+import { useState, useEffect } from "react";
+
+function App() {
+  const [exchangeData, setExchangeData] = useState({});
+  const [exchange2Data, setExchange2Data] = useState({});
+  const [bankData, setBankData] = useState({});
+
+  useEffect(function () {
+    setExchangeData({
+      returns: 100,
+    });
+  }, []);
+
+  useEffect(function () {
+    setExchange2Data({
+      returns: 200,
+    });
+  }, []);
+
+  useEffect(function () {
+    setTimeout(function () {
+      setBankData({
+        income: 300,
+      });
+    });
+  }, []);
+
+  const cryptoReturns = exchangeData.returns + exchange2Data.returns; // This is expensive mathematical operation (something extra)
+
+  const incomeTax = (cryptoReturns + bankData.income) * 0.3;
+
+  return (
+    <div>
+      <h3>Income tax returns are {incomeTax}</h3>
+    </div>
+  );
+}
+
+export default App;
+
+// Lets say we have crypto stored in 3 different exchanges - CoinDCX, WazirX, Binance.
+// We received return from all these places.
+// We added them, Gave it to CA.
+// We received income report.
+// We dont need to recalculate again after income report is generated. It is independent of the Web3 returns.
+
+// cryptoReturns are re-evaluated when the setTimeout runs.
+// It should not happen as neither setExchangeData is changed, nor setExchange2Data has changed.
+
+// This is where useMemo comes in play

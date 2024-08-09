@@ -1,36 +1,42 @@
-import { useEffect, useState } from "react";
-
-import "./App.css";
+import { useState, useEffect, useMemo } from "react";
 
 function App() {
-  // const [count, setCount] = useState(0);
   const [exchangeData, setExchangeData] = useState({});
+  const [exchange2Data, setExchange2Data] = useState({});
   const [bankData, setBankData] = useState({});
-  console.log("Re-render");
 
   useEffect(function () {
-    setTimeout(function () {
-      setBankData({ income: 100 });
-    }, 2000);
+    setExchangeData({
+      returns: 100,
+    });
+  }, []);
+
+  useEffect(function () {
+    setExchange2Data({
+      returns: 200,
+    });
   }, []);
 
   useEffect(function () {
     setTimeout(function () {
-      setExchangeData({
-        returns: 100,
+      setBankData({
+        income: 300,
       });
-    }, 1000);
+    }, 3000);
   }, []);
 
-  // Above code has empty dependency array, which means that we want to run the fetch request only on initial render.
-  // If we add bankData in dependency array, the code inside function will run only when bankData changes.
-  // If we add exchangeData in dependency array, the code inside function will run only when exchangeData changes.
+  const cryptoReturns = useMemo(() => {
+    console.log("Hi there - Before");
+    return exchangeData.returns + exchange2Data.returns;
+  }, [exchangeData, exchange2Data]);
 
-  const incomeTax = (bankData.income + exchangeData.returns) * 0.3;
+  const incomeTax = (cryptoReturns + bankData.income) * 0.3;
 
-  return <div>Hi, Your income tax returns are {incomeTax}</div>;
+  return (
+    <div>
+      <h3>Income tax returns are {incomeTax}</h3>
+    </div>
+  );
 }
 
 export default App;
-
-// Problem without useEffect: continuous re-render
