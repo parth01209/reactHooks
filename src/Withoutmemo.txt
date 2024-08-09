@@ -1,6 +1,4 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/display-name */
-import { useState, useEffect, memo, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   const [exchangeData, setExchangeData] = useState({});
@@ -28,12 +26,9 @@ function App() {
     }, 3000);
   }, []);
 
-  const calculateCryptoReturns = useCallback(
-    function () {
-      return exchangeData.returns + exchange2Data.returns;
-    },
-    [exchangeData, exchange2Data]
-  );
+  const calculateCryptoReturns = function () {
+    return exchangeData.returns + exchange2Data.returns;
+  };
 
   // const incomeTax = (calculateCryptoReturns() + bankData.income) * 0.3;
 
@@ -44,14 +39,17 @@ function App() {
   );
 }
 
-const CryptoGainsCalculator = memo(function ({ calculateCryptoReturns }) {
+// eslint-disable-next-line react/prop-types
+function CryptoGainsCalculator({ calculateCryptoReturns }) {
   console.log("Crypto child re-renders");
   return <div>Your crypto returns are {calculateCryptoReturns()}</div>;
-});
+}
 
 export default App;
 
-// React says , if you want to tell me that function hasn't changed across re-renders, wrap it inside useCallback hook.
-// Give it dependency. Once one of the dependency changes, re-render takes place. Otherwise, the piece won't re-render
+// useCallback is about not rendering a child, if function doesn't need to change across renders.
+// It is not about minimizing amount of code to be run.
 
-// Failing to pass correct dependency or passing no dependency would result in abnormal results as the render wont take place even for exchangeData and exchange2Data
+// Anytime a parent re-renders, its child component is bound to re-render
+// This is true until we introduce memo. Memo is different from useMemo.
+//  Memo helps you to skip re-rendering a component when its props are unchanged.
